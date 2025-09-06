@@ -1,10 +1,14 @@
 {
+  "name": "@tehnools/simplicity-backend-test",
   "title": "simplicity-backend-test",
+  "version": "0.0.1",
   "author": {
     "name": "Noel Soong",
     "email": "noelsoongdev@gmail.com"
   },
-  "version": "1.0.0",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "description": "A simple backend test project",
   "main": "dist/index.js",
   "type": "module",
