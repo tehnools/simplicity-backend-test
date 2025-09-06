@@ -1,0 +1,106 @@
+name: CI/CD Pipeline build/test/publish
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  release:
+    types: [created]
+env:
+  runsOn: ubuntu-latest
+  nodeVersion: "20.x"
+  pnpmVersion: "10.15.1"
+  cache-dependency-path: "pnpm-lock.yaml"
+  build-artifact-path: "dist/"
+  build-artifact-name: "dist"
+jobs:
+  lint-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: $nodeVersion
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: $pnpmVersion
+      - name: Install dependencies
+        run: pnpm install
+      - name: Run tests
+        run: pnpm test
+      - name: Run ESLint
+        run: pnpm eslint .
+  build:
+    needs: lint-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: $nodeVersion
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: $pnpmVersion
+      - name: Install dependencies
+        run: pnpm install
+      - name: Build
+        run: pnpm build
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.pnpmVersion }}
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - name: Update version from release tag
+        run: |
+          RELEASE_TAG=${GITHUB_REF#refs/tags/}
+          echo "Updating to version $RELEASE_TAG"
+          pnpm version $RELEASE_TAG --no-git-tag-version
+
+      - name: Create release archive
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          tar -czf "release-v$VERSION.tar.gz" dist/
+
+      - name: Attach archive to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./release-v${{ steps.package-version.outputs.version }}.tar.gz
+          asset_name: release-v${{ steps.package-version.outputs.version }}.tar.gz
+          asset_content_type: application/gzip
+
+      - name: Publish to NPM
+        run: pnpm publish --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

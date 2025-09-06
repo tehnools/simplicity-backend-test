@@ -12,7 +12,8 @@
     "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
     "build": "tsc -p tsconfig.app.json",
-    "test": "vitest"
+    "test": "vitest",
+    "lint": "eslint . --ext .ts"
   },
   "dependencies": {
     "@fastify/vite": "^8.2.0",

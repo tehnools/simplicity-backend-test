@@ -17,4 +17,7 @@ export default defineConfig([
       ],
     },
   },
+  {
+    ignores: ["dist/**", "node_modules/**", "prettier.config.js"],
+  },
 ]);

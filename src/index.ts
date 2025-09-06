@@ -3,7 +3,6 @@ import { createServer } from "http";
 // imagine this is from a .env file
 const PORT = 3000;
 const HOSTNAME = "0.0.0.0";
-const FORCAST_API_URL = "https://api.open-meteo.com/v1/forecast";
 
 const server = createServer((req, res) => {
   if (req.url === "/" && req.method === "GET") {
