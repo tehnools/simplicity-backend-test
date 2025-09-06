@@ -27,7 +27,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: $pnpmVersion
+          version: ${{ env.pnpmVersion }}
       - name: Install dependencies
         run: pnpm install
       - name: Run tests
