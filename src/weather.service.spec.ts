@@ -35,6 +35,23 @@ describe('WeatherClient', () => {
       timezone: 'GMT',
       timezone_abbreviation: 'GMT',
       elevation: 100,
+      current_weather: {
+        temperature: 15,
+        windspeed: 5,
+        winddirection: 180,
+        weathercode: 0,
+        is_day: 1,
+        time: '2023-01-01T00:00'
+      },
+      current_weather_units: {
+        time: 'iso8601',
+        interval: 'seconds',
+        temperature: '°C',
+        windspeed: 'km/h',
+        winddirection: '°',
+        is_day: 'boolean',
+        weathercode: 'wmo code'
+      },
       hourly_units: {
         time: 'iso8601',
         temperature_2m: '°C',

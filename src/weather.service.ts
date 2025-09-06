@@ -14,6 +14,41 @@ export interface WeatherResponse {
   timezone: string
   timezone_abbreviation: string
   elevation: number
+  current_weather: {
+    temperature: number
+    windspeed: number
+    winddirection: number
+    weathercode: number
+    is_day: number
+    time: string
+  }
+  current_weather_units: {
+    time: string
+    interval: string
+    temperature: string
+    windspeed: string
+    winddirection: string
+    is_day: string
+    weathercode: string
+  }
+  daily_units?: {
+    time: string
+    temperature_2m_max: string
+    temperature_2m_min: string
+    sunrise: string
+    sunset: string
+    precipitation_sum: string
+    windspeed_10m_max: string
+  }
+  daily?: {
+    time: string[]
+    temperature_2m_max: number[]
+    temperature_2m_min: number[]
+    sunrise: string[]
+    sunset: string[]
+    precipitation_sum: number[]
+    windspeed_10m_max: number[]
+  }
   hourly_units: {
     time: string
     temperature_2m: string
