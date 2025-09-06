@@ -1,5 +1,3 @@
-const FORCAST_API_URL = 'https://api.open-meteo.com/v1/forecast'
-
 export interface WeatherApiOptions {
   currentWeather?: boolean
   hourly?: string[]
@@ -42,11 +40,22 @@ export interface WeatherResponse {
   }
 }
 
-export class WeatherClient {
-  private readonly apiKey: string
+export const formatUrl = (url: string, params: Record<string, string | number | boolean>) => {
+  const query = new URLSearchParams()
+  for (const key in params) {
+    query.append(key, params[key].toString())
+  }
+  return `${url}?${query.toString()}`
+}
 
-  constructor(apiKey: string) {
-    this.apiKey = apiKey
+const FORCAST_API_URL = 'https://api.open-meteo.com/v1/forecast'
+export class WeatherClient {
+  constructor() {}
+
+  private _client(init: RequestInit = {}, params?: URLSearchParams) {
+    const url = formatUrl(FORCAST_API_URL, params ? Object.fromEntries(params) : {})
+
+    return fetch(url, init)
   }
 
   async getForecast(
@@ -56,10 +65,15 @@ export class WeatherClient {
   ): Promise<[WeatherResponse, undefined] | [undefined, Error]> {
     const params = new URLSearchParams({
       latitude: latitude.toString(),
-      longitude: longitude.toString()
+      longitude: longitude.toString(),
+      hourly: (opts.hourly || []).join(','),
+      current_weather: (opts.currentWeather !== false).toString(),
+      ...(opts.timezone ? { timezone: opts.timezone } : {}),
+      ...(opts.daily ? { daily: opts.daily.join(',') } : {}),
+      ...(opts.forecastDays ? { forecast_days: opts.forecastDays.toString() } : {})
     })
-    const response = await fetch(`${FORCAST_API_URL}`)
 
+    const response = await this._client({ method: 'GET' }, params)
     if (!response.ok) {
       console.error('Error response:', await response.text())
       return [undefined, new Error(`Weather API error: ${response.statusText}`)]

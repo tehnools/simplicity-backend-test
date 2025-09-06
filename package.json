@@ -1,7 +1,7 @@
 {
   "name": "@tehnools/simplicity-backend-test",
   "title": "simplicity-backend-test",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": {
     "name": "Noel Soong",
     "email": "noelsoongdev@gmail.com"
@@ -18,7 +18,7 @@
     "build": "tsc -p tsconfig.app.json",
     "test": "vitest",
     "lint": "eslint . --ext .ts",
-      "format:check": "prettier --check \"src/**/*.{ts,js,json}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,js,json}\"",
     "format": "prettier --write \"src/**/*.{ts,js,json}\""
   },
   "dependencies": {

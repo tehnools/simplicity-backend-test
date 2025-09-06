@@ -1,12 +1,20 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { WeatherClient, WeatherResponse } from './weather.service.js'
+import { formatUrl, WeatherClient, WeatherResponse } from './weather.service.js'
+
+describe('formatUrl', () => {
+  it('should format URL with query parameters', () => {
+    const url = 'https://api.example.com/data'
+    const params = { key1: 'value1', key2: 42, key3: true }
+    const formattedUrl = formatUrl(url, params)
+    expect(formattedUrl).toBe('https://api.example.com/data?key1=value1&key2=42&key3=true')
+  })
+})
 
 describe('WeatherClient', () => {
   let client: WeatherClient
-  const mockApiKey = 'test-api-key'
 
   beforeEach(() => {
-    client = new WeatherClient(mockApiKey)
+    client = new WeatherClient()
     vi.resetAllMocks()
   })
 
@@ -51,7 +59,12 @@ describe('WeatherClient', () => {
 
       expect(error).toBeUndefined()
       expect(response).toEqual(mockResponse)
-      expect(fetch).toHaveBeenCalledWith('https://api.open-meteo.com/v1/forecast')
+      expect(fetch).toHaveBeenCalledWith(
+        'https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&hourly=&current_weather=true',
+        {
+          method: 'GET'
+        }
+      )
     })
 
     it('should handle API errors', async () => {
