@@ -6,7 +6,7 @@
     "declarationMap": true,
     "emitDeclarationOnly": false,
     "noEmit": false,
-    "composite": false
+    "composite": false,
   },
   "include": ["src/**/*.ts"],
   "exclude": [
