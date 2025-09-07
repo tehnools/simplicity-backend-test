@@ -6,6 +6,7 @@
     "name": "Noel Soong",
     "email": "noelsoongdev@gmail.com"
   },
+  "private": false,
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
